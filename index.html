@@ -80,7 +80,7 @@
                     <div class="form-group col-md-4">
                         <label for="admits">A: Average daily admissions:</label>
                         <input type="number" class="form-control" id="admits" aria-describedby="admit-note" min="0.1"
-                            max="100" step=".1" value="3.5">
+                            max="100" step="0.1" value="3.5">
                         <small id="admit-note" class="form-text text-muted">
                             Min 0.1, max 100 average admissions per day
                         </small>
@@ -89,7 +89,7 @@
                     <div class="form-group col-md-4">
                         <label for="los">B: Average length of stay (days):</label>
                         <input type="number" class="form-control" id="los" aria-describedby="los-note" min="1" max="60"
-                            step=".1" value="7.2">
+                            step="0.1" value="7.2">
                         <small id="los-note" class="form-text text-muted">
                             Min 1, max 60 average days per admission
                         </small>
@@ -97,8 +97,8 @@
 
                     <div class="form-group col-md-4">
                         <label for="census">C: Average census:</label>
-                        <input class="form-control" id="census" aria-describedby="census-note" readonly
-                            class="form-control-plaintext">
+                        <input class="form-control form-control-plaintext" id="census" aria-describedby="census-note"
+                            readonly>
                         <small id="census-note" class="form-text text-muted">
                             Implied average unit census (A x B)
                         </small>
@@ -117,15 +117,17 @@
                 <li class="mb-4">
                     To meet demand 75% of days will require at least <b><span id="qt-75-beds"></span> bed(s)</b>.
                     <ul>
-                        <li>Based on an average census of <b><span id="qt-75-census"></b>, this suggests an implied
-                            target occupancy of <b><span id="qt-75-occ"></b> is required.</li>
+                        <li>Based on an average census of <b><span id="qt-75-census"></span></b>, this suggests an
+                            implied
+                            target occupancy of <b><span id="qt-75-occ"></span></b> is required.</li>
                     </ul>
                 </li>
                 <li>
                     To meet demand 95% of days will require at least <b><span id="qt-95-beds"></span> bed(s)</b>.
                     <ul>
-                        <li>Based on an average census of <b><span id="qt-95-census"></b>, this suggests an implied
-                            target occupancy of <b><span id="qt-95-occ"></b> is required.</li>
+                        <li>Based on an average census of <b><span id="qt-95-census"></span></b>, this suggests an
+                            implied
+                            target occupancy of <b><span id="qt-95-occ"></span></b> is required.</li>
                     </ul>
                 </li>
             </ul>
@@ -149,15 +151,17 @@
                 <li class="mb-4">
                     To meet demand 75% of days, a total of <b><span id="sim-75-beds"></span> bed(s)</b> are indicated.
                     <ul>
-                        <li>Based on an average census of <b><span id="sim-75-census"></b>, this suggests an implied
-                            target occupancy of <b><span id="sim-75-occ"></b> is required.</li>
+                        <li>Based on an average census of <b><span id="sim-75-census"></span></b>, this suggests an
+                            implied
+                            target occupancy of <b><span id="sim-75-occ"></span></b> is required.</li>
                     </ul>
                 </li>
                 <li>
                     To meet demand 75% of days, a total of <b><span id="sim-95-beds"></span> bed(s)</b> are indicated.
                     <ul>
-                        <li>Based on an average census of <b><span id="sim-95-census"></b>, this suggests an implied
-                            target occupancy of <b><span id="sim-95-occ"></b> is required.</li>
+                        <li>Based on an average census of <b><span id="sim-95-census"></span></b>, this suggests an
+                            implied
+                            target occupancy of <b><span id="sim-95-occ"></span></b> is required.</li>
                     </ul>
                 </li>
             </ul>
@@ -177,23 +181,23 @@
                 <div class="col-md-3">
                     <table class="table table-sm table-bordered" id="census_stats">
                         <tr>
-                            <td>Average</th>
-                            <td id="avg" class="text-right">TBD</td>
+                            <th>Average</th>
+                            <th id="avg" class="text-right">TBD</th>
                         </tr>
                         <tr>
-                            <td>25th percentile</th>
+                            <td>25th percentile</td>
                             <td id="p25" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>50th percentile</th>
+                            <td>50th percentile</td>
                             <td id="p50" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>75th percentile</th>
+                            <td>75th percentile</td>
                             <td id="p75" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>95th percentile</th>
+                            <td>95th percentile</td>
                             <td id="p95" class="text-right">TBD</td>
                         </tr>
                     </table>
@@ -209,23 +213,23 @@
                 <div class="col-md-3">
                     <table class="table table-sm table-bordered" id="admits_stats">
                         <tr>
-                            <td>Average</th>
-                            <td id="avg" class="text-right">TBD</td>
+                            <th>Average</th>
+                            <th id="avg" class="text-right">TBD</th>
                         </tr>
                         <tr>
-                            <td>25th percentile</th>
+                            <td>25th percentile</td>
                             <td id="p25" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>50th percentile</th>
+                            <td>50th percentile</td>
                             <td id="p50" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>75th percentile</th>
+                            <td>75th percentile</td>
                             <td id="p75" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>95th percentile</th>
+                            <td>95th percentile</td>
                             <td id="p95" class="text-right">TBD</td>
                         </tr>
                     </table>
@@ -240,23 +244,23 @@
                 <div class="col-md-3">
                     <table class="table table-sm table-bordered" id="los_stats">
                         <tr>
-                            <td>Average</th>
-                            <td id="avg" class="text-right">TBD</td>
+                            <th>Average</th>
+                            <th id="avg" class="text-right">TBD</th>
                         </tr>
                         <tr>
-                            <td>25th percentile</th>
+                            <td>25th percentile</td>
                             <td id="p25" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>50th percentile</th>
+                            <td>50th percentile</td>
                             <td id="p50" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>75th percentile</th>
+                            <td>75th percentile</td>
                             <td id="p75" class="text-right">TBD</td>
                         </tr>
                         <tr>
-                            <td>95th percentile</th>
+                            <td>95th percentile</td>
                             <td id="p95" class="text-right">TBD</td>
                         </tr>
                     </table>
