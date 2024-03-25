@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html;" charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .sub-title {
+            text-align: center;
+            color: #7F7F7F;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .sub-text {
+            font-size: 1.25rem;
+            line-height: 1.25;
+        }
+
+        .section {
+            padding-top: 50px;
+        }
+
+        .sub-section {
+            margin-top: 50px;
+        }
+
+        span.text-divider {
+            margin-left: 6pt;
+            margin-right: 6pt;
+            border-left: 1px solid #7F7F7F;
+        }
+
+        label {
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- Bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <!-- Search engine things -->
+    <title>Hospital census simulator</title>
+    <meta name="description" content="Hospital census simulator to demonstrate normal expected variation" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NV6XW1CTLL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-NV6XW1CTLL');
+    </script>
+</head>
+
+<body>
+    <!-- Content -->
+    <div class="container">
+
+
+        <!-- Intro -->
+        <div id="intro" class="section">
+            <h1>Hospital census simulation</h1>
+            <p>
+                The expected variance in hospital census is often misunderstood. Unit sizes are often planned based on
+                target occupancy rates that do not reflect expected variation in admissions and length of
+                stay. This simulation attempts to demonstrate how experimental outcomes match both theoretical as well
+                as real-world outcomes.
+            </p>
+        </div>
+
+        <div id="params" class="section">
+            <h3>Key parameters</h3>
+            <form>
+                <div class="form-row align-items-end">
+                    <div class="form-group col-md-4">
+                        <label for="admits">Average daily admissions:</label>
+                        <input type="number" class="form-control" id="admits" min="0.1" max="100" step=".1" value="1.5">
+                        <small id="admit-note" class="form-text text-muted">
+                            Min 1, max 100 average admissions per day
+                        </small>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="los">Average length of stay:</label>
+                        <input type="number" class="form-control" id="los" min="1" max="60" step=".1" value="7.2">
+                        <small id="admit-note" class="form-text text-muted">
+                            Min 1, max 60 average days per admission
+                        </small>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="capacity">Unit capacity:</label>
+                        <input type="number" class="form-control" id="capacity" min="1" max="999" step="1" value="15">
+                        <small id="admit-note" class="form-text text-muted">
+                            Min 1, max 999 beds
+                        </small>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                        <small id="admit-note" class="form-text text-muted">
+                            &nbsp;
+                        </small>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="outputs" class="section" style="display: none;"">
+            <h3>Key outputs</h3>
+            <div class=" form-row align-items-end">
+            <div class="form-group col-md-4">
+                <label for="admits">Average census:</label>
+                <input type="text" readonly class="form-control-plaintext" id="census_avg" value="TBD">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="admits">75th percentile census:</label>
+                <input type="text" readonly class="form-control-plaintext" id="census_75" value="TBD">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="admits">95th percentile census:</label>
+                <input type="text" readonly class="form-control-plaintext" id="census_95" value="TBD">
+            </div>
+
+            <div class="form-group col-md-4 offset-md-4">
+                <label for="admits">Implied occupancy at 75th percentile census:</label>
+                <input type="text" readonly class="form-control-plaintext" id="occ_75" value="TBD">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="admits">Implied occupancy at 95th percentile census:</label>
+                <input type="text" readonly class="form-control-plaintext" id="occ_95" value="TBD">
+            </div>
+        </div>
+
+        <h3>Detailed results</h3>
+
+
+    </div>
+
+    <div id="faq" class="section">
+        <h3>Frequently asked questions</h3>
+        <p>
+            <b>How are daily admissions simulated?</b><br />
+            Admissions are simulated using a <a href="https://en.wikipedia.org/wiki/Poisson_distribution">Poisson
+                distribution</a>, with the average daily admissions as the mean.
+            Poisson distributions are widely used in healthcare to model events such as hospital admissions where
+            patient arrivals are unscheduled and independent from one another.
+        </p>
+        <p>
+            <b>How is length of stay simulated?</b><br />
+            Length of stay is simulated using a <a
+                href="https://en.wikipedia.org/wiki/Log-normal_distribution">log-normal distribution</a>, with the
+            average length of stay as the mean and a shape parameter equal to 1.0. This attempts to capture the
+            <a
+                href="https://prescient-healthcare.com/2016/07/05/length-stay-often-misunderstood-misconstrued-outcomes-metric/">
+                long tails</a> that are commonly observed from outlier length of stays (may often be alternative level
+            of care or "ALC" days).
+
+            All values are rounded down the nearest integer. Values of "0" are considered are treated like a
+            same-day admit/discharge (i.e., they do not appear in the 'midnight' census).
+        </p>
+        <p>
+            <b>How is census simulated?</b><br />
+            Drawing on samples of daily admission and length of stay, a running census is calculated for each day. A
+            "cold start" of 1-year is simulated to allow the model to stabilize.
+        </p>
+        <p>
+            <b>Are these the best distributions to model hospital admissions and length of stay?</b><br />
+            Different patient groups may see better fit with different distributions. Further, these do not consider
+            scheduled admissions, where admissions (and often length of stay) are well known in advance.
+
+            However, we argue these distributions are well known in literature, and 'close enough' to real-world
+            outcomes so that they are useful as an instructive tool for understanding how admissions and length of
+            stay affect variation in census.
+        </p>
+        <p>
+            <b>How do I interpret percentiles?</b><br />
+            Percentiles are useful to understand variance in census, admissions, or length of stay. The
+            <em>x</em>th percentile indicates <em>x</em>% of data points fall at or below that value. For example,
+            a 75th percentile census value of 20 patients indicates that 75% of days have a census at or below 20
+            patients.
+        </p>
+        <p>
+            <b>What is an 'implied occupancy'?</b><br />
+            Implied occupancy is a simple calculation that divides the average census by a target <em>x</em>th
+            percentile census. It suggests the target occupancy rate that would be required to meet demand
+            <em>x</em>% of days.
+
+            For example, if the average census was 10 and the 75th percentile was 15, then the implied occupancy at
+            the 75th percentile would be 10/15 = 67%. Experimentally (and theoretically) you will find that a
+            smaller average census will tend to see lower implied occupancy rates. That is to say, there is more
+            'variability' in census when the average census is low.
+        </p>
+        <p>
+            <b>Who created this? Can I share this document?</b><br />
+            This <span property="dct:title">Hospital Census Simulator</span> was created by <span
+                property="cc:attributionName">John
+                LaRusic (<a href="https://compasshealth.ca">Compass Healthcare</a>)</span> is licensed under <a
+                href="http://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank"
+                rel="license noopener noreferrer" style="display:inline-block;">Attribution-ShareAlike 4.0
+                International<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
+                    src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img
+                    style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
+                    src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img
+                    style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
+                    src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a>.<br />
+            Note this HTML page is self-contained with all the required code.
+        </p>
+    </div>
+
+
+    <div class="section font-italic">
+        We acknowledge we operate out of the traditional and unceded territories of the xʷməθkʷəy̓əm (Musqueam
+        Indian Band), Sḵwx̱wú7mesh (Squamish Nation), and səlilwətaɬ (Tsleil-Waututh Nation). Further, we
+        acknowledge our work impacts Indigenous Nations across the colonized nation of Canada. This
+        acknowledgement reminds us that our work must center First Nation, Metis and Inuit voices in a best
+        effort to decolonize health care service planning and delivery.
+    </div>
+
+    <!-- Footer -->
+    <div id="footer" class="section mb-4">
+        <div class="row small">
+            <div class="col-md-9">
+                &copy; 2024 Compass Healthcare Management Consulting Inc.
+                <br />
+                <a href="terms.html">Terms and Conditions</a>
+                &nbsp;
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+            <div class="col-md-3 text-right">
+                <a href="#">Back to top</a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS-->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+        integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous">
+        </script>
+
+    <script type="text/javascript" src="queueing.js"></script>
+
+    <script type="text/javascript">
+
+        // On document ready
+        $(function () {
+            $("form").submit(function (e) {
+                e.preventDefault();
+                var avg_admits = parseFloat($("#admits").val());
+                var avg_los = parseFloat($("#los").val());
+                var capacity = parseInt($("#capacity").val());
+
+                $("#outputs").hide("slow");
+
+                var q = new MMCQueue(avg_admits, 1 / avg_los, capacity);
+
+                console.log("Util: " + q.Util());
+                console.log("P0: " + q.P0());
+                console.log("Lq: " + q.Lq());
+                console.log("L: " + q.L());
+                console.log("Wq: " + q.Wq());
+                console.log("W: " + q.W());
+
+                console.log("PrWait: " + q.PrWait());
+                console.log("Current Service Level: " + q.ServiceLevel(2 / 24));
+                console.log("Min Servers: " + q.MinServers(2 / 24, 0.9));
+
+                $("#outputs").show("slow");
+            });
+        });
+
+    </script>
+</body>
+
+</html>
