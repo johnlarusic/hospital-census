@@ -73,7 +73,7 @@
 
         <div id="params" class="section">
             <h3>Key parameters</h3>
-            <form>
+            <form novalidate>
                 <div class="form-row">
 
 
@@ -100,7 +100,7 @@
                         <input class="form-control form-control-plaintext" id="census" aria-describedby="census-note"
                             readonly>
                         <small id="census-note" class="form-text text-muted">
-                            Implied average unit census (A x B)
+                            Implied average unit census (A x B), must be less than 500.
                         </small>
                     </div>
 
@@ -157,7 +157,7 @@
                     </ul>
                 </li>
                 <li>
-                    To meet demand 75% of days, a total of <b><span id="sim-95-beds"></span> bed(s)</b> are indicated.
+                    To meet demand 95% of days, a total of <b><span id="sim-95-beds"></span> bed(s)</b> are indicated.
                     <ul>
                         <li>Based on an average census of <b><span id="sim-95-census"></span></b>, this suggests an
                             implied
@@ -506,6 +506,9 @@
             if (census_diff > 0) {
                 census_diff = "+" + census_diff;
             }
+            if (Math.round(census_diff * 10) / 10 == 0) {
+                census_diff = "no difference";
+            }
 
             $("#sim-census").text(sim_census_l);
             $("#sim-75-census").text(sim_census_l);
@@ -552,18 +555,54 @@
             $("#qt-outputs").show("slow");
         }
 
-        function update_page() {
+        function validate_form() {
+            var invalid_class = "is-invalid";
+
+            $("#admits").removeClass(invalid_class);
+            $("#los").removeClass(invalid_class);
+            $("#census").removeClass(invalid_class);
+
+            var avg_admits = parseFloat($("#admits").val());
+            var avg_los = parseFloat($("#los").val());
+            var avg_census = avg_admits * avg_los;
+
+            var validated = true;
+            if (avg_admits < 0.1 || avg_admits > 100) {
+                $("#admits").addClass(invalid_class);
+                validated = false;
+            }
+
+            if (avg_los < 1 || avg_los > 60) {
+                $("#los").addClass(invalid_class);
+                validated = false;
+            }
+
+            if (avg_census > 500) {
+                $("#census").addClass(invalid_class);
+                validated = false;
+            }
+
+            return validated;
+        }
+
+        function update_page(sim_only = false) {
             var avg_admits = parseFloat($("#admits").val());
             var avg_los = parseFloat($("#los").val());
             var avg_census = avg_admits * avg_los;
 
             var avg_census_l = avg_census.toFixed(1);
-
             $("#census").val(avg_census_l);
-            $("#qt-75-census").text(avg_census_l);
-            $("#qt-95-census").text(avg_census_l);
 
-            update_qt(avg_admits, avg_los, avg_census);
+            if (!validate_form()) {
+                return;
+            }
+
+            if (!sim_only) {
+                $("#qt-75-census").text(avg_census_l);
+                $("#qt-95-census").text(avg_census_l);
+
+                update_qt(avg_admits, avg_los, avg_census);
+            }
             update_sim(avg_admits, avg_los, avg_census);
         }
 
@@ -573,20 +612,17 @@
 
             $("form").change(function (e) {
                 e.preventDefault();
-                update_page();
+                update_page(false);
             });
 
             $("form").submit(function (e) {
                 e.preventDefault();
-                update_page();
+                update_page(false);
             });
 
             $("#rerun-sim").click(function (e) {
                 e.preventDefault();
-                var avg_admits = parseFloat($("#admits").val());
-                var avg_los = parseFloat($("#los").val());
-                var avg_census = avg_admits * avg_los;
-                update_sim(avg_admits, avg_los, avg_census);
+                update_page(true);
             });
         });
 
