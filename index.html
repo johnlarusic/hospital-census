@@ -145,23 +145,25 @@
             <ul>
                 <li class="mb-4">
                     Based on a 3-year long simulation, an average census of <b><span id="sim-census"></span></b> was
-                    observed
-                    (<span id="sim-census-diff"></span> versus the theoretical average census).
+                    observed (<span id="sim-census-diff"></span> versus the theoretical average census).
+                    <ul>
+                        <li>Based on the standard deviation of <b>&plusmn;<span id="sim-census-stdev"></span></b>, this
+                            suggests census varies <b>&plusmn;<span id="sim-census-var"></span></b> versus the average
+                            census.</li>
+                    </ul>
                 </li>
                 <li class="mb-4">
                     To meet demand 75% of days, a total of <b><span id="sim-75-beds"></span> bed(s)</b> are indicated.
                     <ul>
                         <li>Based on an average census of <b><span id="sim-75-census"></span></b>, this suggests an
-                            implied
-                            target occupancy of <b><span id="sim-75-occ"></span></b> is required.</li>
+                            implied target occupancy of <b><span id="sim-75-occ"></span></b> is required.</li>
                     </ul>
                 </li>
                 <li>
                     To meet demand 95% of days, a total of <b><span id="sim-95-beds"></span> bed(s)</b> are indicated.
                     <ul>
                         <li>Based on an average census of <b><span id="sim-95-census"></span></b>, this suggests an
-                            implied
-                            target occupancy of <b><span id="sim-95-occ"></span></b> is required.</li>
+                            implied target occupancy of <b><span id="sim-95-occ"></span></b> is required.</li>
                     </ul>
                 </li>
             </ul>
@@ -174,6 +176,7 @@
             <h3>Detailed results</h3>
 
             <h5>Census trend</h5>
+            Note that dashed line indicates the average census.
             <div class="row">
                 <div class="col-md-9">
                     <div id="census_chart" style="width: 100%; height: 400px;"></div>
@@ -183,6 +186,10 @@
                         <tr>
                             <th>Average</th>
                             <th id="avg" class="text-right">TBD</th>
+                        </tr>
+                        <tr>
+                            <td>Std. deviation</td>
+                            <td id="stdev" class="text-right">TBD</td>
                         </tr>
                         <tr>
                             <td>25th percentile</td>
@@ -205,6 +212,7 @@
             </div>
 
             <h5>Admissions trends and distribution</h5>
+            Note that dashed line indicates the average daily admissions.
             <div class="row">
                 <div class="col-md-9">
                     <div id="admits_trend" style="width: 100%; height: 400px;"></div>
@@ -215,6 +223,10 @@
                         <tr>
                             <th>Average</th>
                             <th id="avg" class="text-right">TBD</th>
+                        </tr>
+                        <tr>
+                            <td>Std. deviation</td>
+                            <td id="stdev" class="text-right">TBD</td>
                         </tr>
                         <tr>
                             <td>25th percentile</td>
@@ -246,6 +258,10 @@
                         <tr>
                             <th>Average</th>
                             <th id="avg" class="text-right">TBD</th>
+                        </tr>
+                        <tr>
+                            <td>Std. deviation</td>
+                            <td id="stdev" class="text-right">TBD</td>
                         </tr>
                         <tr>
                             <td>25th percentile</td>
@@ -336,6 +352,10 @@
                 result, the two models will be close, but often slightly different.
             </p>
             <p>
+                <b>How do my units operate at higher levels of occupancy?</b><br />
+                Please review the accompanying article for a discussion on this topic.
+            </p>
+            <p>
                 <b>Who created this? Can I see or modify the code?</b><br />
                 This <span property="dct:title">Hospital Census Simulator</span> was created by <span
                     property="cc:attributionName">John
@@ -391,6 +411,8 @@
         // Update stats table for given focus
         function update_stats_table(target_table, avg, stats) {
             target_table.find("#avg").text(avg.toFixed(1));
+            //target_table.find("#stdev").text(stats.stdev.toFixed(1));
+            target_table.find("#stdev").text('\u{00B1}' + stats.stdev.toFixed(1));
             target_table.find("#p25").text(stats.p25.toFixed(0));
             target_table.find("#p50").text(stats.p50.toFixed(0));
             target_table.find("#p75").text(stats.p75.toFixed(0));
@@ -412,7 +434,20 @@
                     margin: { t: 0 },
                     xaxis: { title: 'Calendar day', type: 'category' },
                     yaxis: { title: 'Total census' },
-                    bargap: 0
+                    bargap: 0,
+                    shapes: [{
+                        type: 'line', xref: 'paper',
+                        x0: 0, x1: 1, yref: 'y',
+                        y0: results.avg_census,
+                        y1: results.avg_census,
+                        line: {
+                            dash: 'dot',
+                        },
+                        label: {
+                            text: 'Average',
+                            textposition: 'end'
+                        }
+                    }]
                 }
             );
         }
@@ -427,7 +462,7 @@
             update_stats_table($("#admits_stats"), results.avg_admits, admits_stats);
 
             var day_labels = Array.from({ length: results.total_days }, (_, i) => i + 1);
-            var admit_labels = Array.from({ length: admit_pdf.length }, (_, i) => i + 1);
+            var admit_labels = Array.from({ length: admit_pdf.length }, (_, i) => i);
 
             Plotly.newPlot(admits_trend,
                 [{ type: "bar", x: day_labels, y: results.admits }],
@@ -435,7 +470,20 @@
                     margin: { t: 0 },
                     xaxis: { title: 'Calendar day', type: 'category' },
                     yaxis: { title: 'Total admissions' },
-                    bargap: 0
+                    bargap: 0,
+                    shapes: [{
+                        type: 'line', xref: 'paper',
+                        x0: 0, x1: 1, yref: 'y',
+                        y0: admits_stats.avg,
+                        y1: admits_stats.avg,
+                        line: {
+                            dash: 'dot',
+                        },
+                        label: {
+                            text: 'Average',
+                            textposition: 'end'
+                        }
+                    }]
                 }
             );
 
@@ -463,17 +511,15 @@
 
             // Sum total data points beyond the 95th percentile
             var outliers = 0
-            for (var i = p95 + 1; i < los_pdf.length; i++) {
+            for (var i = p95; i < los_pdf.length; i++) {
                 outliers += los_pdf[i];
             }
-            los_pdf = los_pdf.slice(0, p95 + 1);
+            los_pdf = los_pdf.slice(0, p95);
             los_pdf.push(outliers);
-
-
 
             update_stats_table($("#los_stats"), results.avg_los, los_stats);
 
-            var los_labels = Array.from({ length: los_pdf.length }, (_, i) => i.toString())
+            var los_labels = Array.from({ length: los_pdf.length }, (_, i) => (i + 1).toString())
             los_labels[los_labels.length - 1] += "+"
 
             Plotly.newPlot(los_chart,
@@ -501,6 +547,8 @@
             occ_95 = avg_census / p95_census * 100;
 
             sim_census_l = sim_census.toFixed(1);
+            sim_stdev_l = census_stats.stdev.toFixed(1);
+            sim_var_l = (census_stats.stdev / sim_census * 100).toFixed(0) + "%";
 
             census_diff = (sim_census - avg_census).toFixed(1);
             if (census_diff > 0) {
@@ -511,9 +559,13 @@
             }
 
             $("#sim-census").text(sim_census_l);
+            $("#sim-census-diff").text(census_diff);
+            $("#sim-census-stdev").text(sim_stdev_l);
+            $("#sim-census-var").text(sim_var_l);
+
             $("#sim-75-census").text(sim_census_l);
             $("#sim-95-census").text(sim_census_l);
-            $("#sim-census-diff").text(census_diff);
+
             $("#sim-75-beds").text(p75_census);
             $("#sim-95-beds").text(p95_census);
             $("#sim-75-occ").text(occ_75.toFixed(0) + "%");

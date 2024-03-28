@@ -86,9 +86,18 @@ function get_stats(array) {
     get_percentile = function (array, p) {
         return array[Math.ceil(array.length * p) - 1];
     }
+    get_average = function (array) {
+        return array.reduce((a, b) => a + b, 0) / array.length;
+    }
+    get_stddev = function (array, avg) {
+        return Math.sqrt(array.map(x => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) / array.length);
+    }
 
     a = array.slice().sort(function (a, b) { return a - b; });
+    avg = get_average(a);
     return {
+        "avg": avg,
+        "stdev": get_stddev(a, avg),
         "p05": get_percentile(a, 0.05),
         "p25": get_percentile(a, 0.25),
         "p50": get_percentile(a, 0.50),
